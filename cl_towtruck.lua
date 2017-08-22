@@ -6,16 +6,22 @@ vehicles.cVehicle = nil
 
 RegisterNetEvent("setTruck")
 AddEventHandler("setTruck", function()
-	local checkModelTruck = IsVehicleModel(GetVehiclePedIsIn(GetPlayerPed(-1), false), GetHashKey("flatbed"))
-	if not checkModelTruck then
-		TriggerEvent("chatMessage", "Error", {255, 0, 0}, "You need to be in a flatbed to set the towtruck.")
-		return
-	end
-
-	if checkModelTruck then
-		vehicles.vTruck = GetVehiclePedIsIn(GetPlayerPed(-1), false)
-		TriggerEvent("chatMessage", "Notice", {255, 0, 0}, "You have set your towtruck")
-		return
+	if vehicles.vTruck == nil then
+		local plyCoords = GetOffsetFromEntityInWorldCoords(GetPlayerPed(PlayerId()), 0.0, 6.5, 0.0)
+		local plyHeading = GetEntityHeading(GetPlayerPed(PlayerId()))
+		local truck_model = "flatbed"
+		RequestModel(GetHashKey(truck_model))
+		while not HasModelLoaded(GetHashKey(truck_model)) do
+			RequestModel(GetHashKey(truck_model))
+		end
+		vehicles.vTruck = CreateVehicle(GetHashKey(truck_model), plyCoords.x, plyCoords.y, plyCoords.z, plyHeading, 1, 1)
+		Citizen.Trace("Spawned Vehicles")
+	else
+		DetachEntity(vehicles.cVehicle, 1, 1)
+		DeleteEntity(vehicles.vTruck)
+		vehicles.vTruck = nil
+		vehicles.cVehicle = nil
+		Citizen.Trace("Deleted Vehicles")
 	end
 end)
 
@@ -376,8 +382,9 @@ end)
 RegisterNetEvent("attachTow")
 AddEventHandler("attachTow", function()
 	Citizen.Trace("Started Attach")
-	local lPos = GetEntityCoords(GetPlayerPed(-1), true)
-	vehicles.cVehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
+	local plyCoords = GetEntityCoords(GetPlayerPed(PlayerId()), false)
+	local coordB = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 5.0, 0.0)
+	vehicles.cVehicle = getVehicleInDirection(plyCoords, coordB)
 
 	AttachEntityToEntity(vehicles.cVehicle, vehicles.vTruck, GetEntityBoneIndexByName(vehicles.vTruck, "bodyshell"), 0, -2.0, 1.2, 0, 0, 0, 1, 1, 0, 1, 0, 1)
 	TriggerEvent("chatMessage", "Notice", {255,0,0}, "You have attached the vehicle")
@@ -408,3 +415,9 @@ Citizen.CreateThread(function()
 		end
 	end
 end)
+
+function getVehicleInDirection(coordFrom, coordTo)
+	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, GetPlayerPed(-1), 0)
+	local a, b, c, d, vehicle = GetRaycastResult(rayHandle)
+	return vehicle
+end
