@@ -1,4 +1,4 @@
--- Scripted by Xander Tanner-Harrison || For LESALife --
+-- Scripted by Xander Tanner-Harrison --
 local vehicles = {}
 vehicles.Attached = false
 vehicles.vTruck = nil

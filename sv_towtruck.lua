@@ -1,4 +1,4 @@
--- Scripted by Xander Tanner-Harrison || For LESALife --
+-- Scripted by Xander Tanner-Harrison --
 AddEventHandler("chatMessage", function(source, n, message)
 	local cm = stringsplit(message, " ")
 	
