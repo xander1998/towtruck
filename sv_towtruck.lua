@@ -12,7 +12,7 @@ AddEventHandler("chatMessage", function(source, n, message)
 		elseif cm[2] == "detach" then
 			CancelEvent()
 			TriggerClientEvent("detachTow", source)
-		elseif cm[2] == "" then
+		elseif cm[2] == "cmds" then
 			CancelEvent()
 			TriggerClientEvent("chatMessage", source, "^1TOW COMMANDS:^2 /tow truck, /tow attach, /tow detach")
 		end
