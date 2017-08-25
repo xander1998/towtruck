@@ -357,7 +357,7 @@ local restrictedVehicles = {
 
 	for k in pairs(restrictedVehicles) do
 		if(restrictedVehicles[k].checkVehicle == 1) then
-			TriggerEvent("chatMessage", "Error", {255, 0, 0}, "You can not tow a " .. restrictedVehicles[k].name .. ".")
+			TriggerEvent("chatMessage", "^1Notice: ^0You can not tow a " .. restrictedVehicles[k].name .. ".")
 			Citizen.Trace("Cannot Tow Message")
 			return
 		end
@@ -370,10 +370,10 @@ AddEventHandler("towVehicle", function()
 	local flatbedModel = IsVehicleModel(GetVehiclePedIsIn(GetPlayerPed(-1), false), GetHashKey("flatbed"))
 
 	if (vehicles.vTruck == nil) then
-		TriggerEvent("chatMessage", "Error", {255, 0, 0}, "Please set your towtruck with /truck.")
+		TriggerEvent("chatMessage", "^1Notice: ^0Please set your towtruck with /truck.")
 		return
 	elseif flatbedModel then
-		TriggerEvent("chatMessage", "Error", {255, 0, 0}, "You can not tow another flatbed.")
+		TriggerEvent("chatMessage", "^1Notice: ^0You can not tow another flatbed.")
 		return
 	elseif not flatbedModel then
 		TriggerEvent("checkList")
@@ -388,7 +388,7 @@ AddEventHandler("attachTow", function()
 	vehicles.cVehicle = getVehicleInDirection(plyCoords, coordB)
 
 	AttachEntityToEntity(vehicles.cVehicle, vehicles.vTruck, GetEntityBoneIndexByName(vehicles.vTruck, "bodyshell"), 0, -2.0, 1.2, 0, 0, 0, 1, 1, 0, 1, 0, 1)
-	TriggerEvent("chatMessage", "Notice", {255,0,0}, "You have attached the vehicle")
+	TriggerEvent("chatMessage", "^1Notice: ^0You have attached the vehicle.")
 	vehicles.Attached = true
 	Citizen.Trace("Finished Attaching")
 end)
@@ -399,10 +399,11 @@ AddEventHandler("detachTow", function()
 		DetachEntity(vehicles.cVehicle, false, false)
 		local vehiclesCoords = GetOffsetFromEntityInWorldCoords(vehicles.vTruck, 0.0, -10.0, 0.0)
 		SetEntityCoords(vehicles.cVehicle, vehiclesCoords["x"], vehiclesCoords["y"], vehiclesCoords["z"], 1, 0, 0, 1)
+		TriggerEvent("chatMessage", "^1Notice: ^0You have detached the vehicle.")
 		vehicles.Attached = false
 		vehicles.cVehicles = nil
 	else
-		TriggerEvent("chatMessage", "Error", {255, 0, 0}, "You do not have a vehicle to detach.")
+		TriggerEvent("chatMessage", "^1Notice: ^0You do not have a vehicle to detach.")
 		return
 	end
 end)
