@@ -12,6 +12,7 @@ AddEventHandler("setTruck", function()
 		local truck_model = "flatbed"
 		RequestModel(GetHashKey(truck_model))
 		while not HasModelLoaded(GetHashKey(truck_model)) do
+			Citizen.Wait(100)
 			RequestModel(GetHashKey(truck_model))
 		end
 		vehicles.vTruck = CreateVehicle(GetHashKey(truck_model), plyCoords.x, plyCoords.y, plyCoords.z, plyHeading, 1, 1)
