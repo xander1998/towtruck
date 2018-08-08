@@ -1,5 +1,22 @@
 local towtruck = nil
 local attachedVehicle = nil
+local createdBlips = {}
+
+---------------------------------------------------------------------------
+-- Starter Blips
+---------------------------------------------------------------------------
+Citizen.CreateThread(function()
+    for a = 1, #XTowConfig.TruckDepos do
+        local blip = AddBlipForCoord(XTowConfig.TruckDepos[a].x, XTowConfig.TruckDepos[a].y, XTowConfig.TruckDepos[a].z)
+        SetBlipSprite(blip, 50)
+        SetBlipColour(blip, 71)
+        SetBlipAsShortRange(blip, true)
+        SetBlipScale(blip, 1.0)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString("Towtruck Depot")
+        EndTextCommandSetBlipName(blip)
+    end
+end)
 
 ---------------------------------------------------------------------------
 -- TRUCK DEPOS
@@ -10,7 +27,6 @@ Citizen.CreateThread(function()
             local ped = GetPlayerPed(PlayerId())
             local pedPos = GetEntityCoords(ped, false)
             local distance = Vdist(pedPos.x, pedPos.y, pedPos.z, XTowConfig.TruckDepos[a].x, XTowConfig.TruckDepos[a].y, XTowConfig.TruckDepos[a].z)
-
             if distance <= 15.0 then
                 DrawMarker(1, XTowConfig.TruckDepos[a].x, XTowConfig.TruckDepos[a].y, XTowConfig.TruckDepos[a].z - 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 150, 61, 61, 1.0, 0, 0, 0, 0, 0, 0, 0)
                 if distance <= 1.2 then
@@ -112,6 +128,19 @@ function AcquireTowtruck(spawn)
     SetEntityAsMissionEntity(spawned, 1, 1)
     SetEntityAsNoLongerNeeded(spawned)
     towtruck = spawned
+
+    -- Create Blips
+    for a = 1, #XTowConfig.Impounds do
+        local blip = AddBlipForCoord(XTowConfig.Impounds[a].x, XTowConfig.Impounds[a].y, XTowConfig.Impounds[a].z)
+        SetBlipSprite(blip, 398)
+        SetBlipColour(blip, 71)
+        SetBlipAsShortRange(blip, true)
+        SetBlipScale(blip, 1.0)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString("Towtruck Impound")
+        EndTextCommandSetBlipName(blip)
+        table.insert(createdBlips, blip)
+    end
 end
 
 function ReturnTowtruck()
@@ -119,6 +148,11 @@ function ReturnTowtruck()
     if not DoesEntityExist(towtruck) then
         towtruck = nil
     end
+
+    for a = 1, #createdBlips do
+        RemoveBlip(createdBlips[a])
+    end
+    createdBlips = {}
 end
 
 function AttachVehicle(vehicle)
